@@ -2,7 +2,6 @@
 
 import urllib.parse
 from requests_html import HTMLSession 
-from bs4 import BeautifulSoup
 
 def build_fb_query(q, ad_type="political_and_issue_ads"):
     getVars = {'country':'US', 'sort_data[direction]':'desc', 'sort_data[mode]':'relevancy_monthly_grouped'}
