@@ -29,6 +29,7 @@ from selenium.webdriver.support.expected_conditions import presence_of_element_l
 from selenium.webdriver.chrome.options import Options
 import time
 from bs4 import BeautifulSoup
+import json
 
 
 def run_selenium_basic_google_search():
@@ -43,6 +44,23 @@ def run_selenium_basic_google_search():
         first_result = wait.until(presence_of_element_located((By.CSS_SELECTOR, "h3")))
         print(first_result.get_attribute("textContent"))
 
+def denest_divs(div, n):
+    subdivs = div.find_all('div')
+    for _ in range(n):
+        for subdiv in subdivs:
+            subdivs = subdiv.find_all('div')
+    return subdivs
+
+def divsToDict(ds, dict, n):
+    for i,d in enumerate(ds):
+        print('=' * n, i,'/',len(ds))
+        text = d.getText().strip()
+        if text:
+            print(text)
+            sds = d.find('div')
+            dict[i] = divsToDict(sds, {}, n+1) if len(sds) > 5 and n < 3 else text
+    return dict
+
 url = "https://www.facebook.com/ads/library/?active_status=all&ad_type=political_and_issue_ads&country=US&q=biden&sort_data[direction]=desc&sort_data[mode]=relevancy_monthly_grouped&search_type=keyword_unordered&media_type=none"
 def run_fb_ads_search():
     options = Options()
@@ -52,16 +70,40 @@ def run_fb_ads_search():
         wait = WebDriverWait(driver, 10) 
         driver.get(url)
         ##################
-        for _ in range(5): # need to do something a couple of times to get consistent number of elements. idk. 
-            # Parse through all HTML content in <body>
+        # Parse through all HTML content in <body>
+        for _ in range(10): # need to do something a couple of times to get consistent number of elements. idk. 
             html = driver.execute_script("return document.body.outerHTML;")
-            # print(html)
             soup = BeautifulSoup(html, "html.parser")
-            divs = soup.find_all('div')
-            print(len(divs))
-            # for i,div in enumerate(divs):
-            #     if i > 20: break
-            #     print(div, "\n\n")
+        divs = soup.find('div')  # div.text gives some good meat we could split on maybe.
+        print(len(divs))
+        # for d in divs:
+        #     print("=========")
+        #     print(d.getText()[:128])
+
+        d = divsToDict(divs, {}, 0)
+        print("HERE!")
+        # js = json.dumps(d)
+        with open('out.txt', 'w') as f:
+            json.dump(d, f)
+
+
+        # for i,div in enumerate(divs):
+        #     print("Layer0=",i)
+        #     subdivs0 = div.find_all('div')
+        #     for i,sd0 in enumerate(subdivs0):
+        #         print("Layer1=",i)
+        #         subdivs1 = sd0.find_all('div')
+        #         for i,sd1 in enumerate(subdivs1):
+        #             print("Layer2=",i)
+        #             if sd1.text:
+        #                 subdivs2 = sd1.find_all('div')
+        #                 for i,sd2 in enumerate(subdivs2):
+        #                     print("Layer3=",i)
+        #                     if sd2.text:
+        #                         print(sd2)
+        #                     input()
+                        
+        
 
         #############
         # SEARCH BY DIV. All ads in one DIV in nested sub-divs we could iterate through with BS4.
