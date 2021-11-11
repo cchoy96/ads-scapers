@@ -34,7 +34,7 @@ def scrape_advertisers():
         wait = WebDriverWait(driver, 10) 
         driver.get(url)
         # advertisers = driver.find_element(By.ID, "top_advertisers")
-        elems = driver.find_elements(By.XPATH, "//data-table[@id='top_advertisers']/visualization-container/div[@class='visualization']//tbody/tr")
+        elems = driver.find_elements(By.XPATH, "//data-table[@id='top_advertisers']/visualization-container//tbody/tr")
         print(len(elems))
 
         # elems = driver.find_elements(By.CLASS_NAME, "google-visualization-table-td")
