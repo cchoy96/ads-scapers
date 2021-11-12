@@ -16,3 +16,7 @@ selenium: `$pythong3 -m pip install selenium`
 - running requests-html:HTMLSession().get().html.render() the first time will install chromium to render it.
 - todo: check out selenium
 - https://www.freecodecamp.org/news/webscraping-in-python/
+- xpath cheatsheet = https://devhints.io/xpath 
+- xpath syntax/tutorail = https://www.w3schools.com/xml/xpath_syntax.asp
+- scrolling in selenium python = https://stackoverflow.com/questions/20986631/how-can-i-scroll-a-web-page-using-selenium-webdriver-in-python
+- XPATHs can be obtained by inspecting page, right-clicking on desired block and hitting Copy > XPath. 
