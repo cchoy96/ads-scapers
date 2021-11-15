@@ -51,8 +51,10 @@ def fb_scrape(keyword, ad_type):
                 ads = month.find_elements(By.XPATH, './div[3]/div[1]/div')
                 count += len(ads)
                 for ad in ads:
-                    adText = ad.find_element(By.XPATH, './div/div[3]/div/div/div[2]').text.strip().encode("ascii","ignore").decode("ascii")
-                    ad_texts.append(adText.replace("\n"," ").replace(",", ''))
+                    text = ad.find_element(By.XPATH, './div/div[3]/div/div/div[2]').text.strip().encode("ascii","ignore").decode("ascii")
+                    text = text.replace("\n"," ").replace(",", '')
+                    if text:
+                        ad_texts.append(text)
             except:
                 pass
             print("Ads scraped: ", count)
