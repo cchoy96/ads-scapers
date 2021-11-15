@@ -130,10 +130,23 @@ def better_fb_search():
         driver.get(url)
         time.sleep(5)
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);") #scroll to bottom of page
-        elems = driver.find_elements(By.XPATH, '//*[@id="content"]/div/div/div/div[3]/div[1]/div/div/div[4]/div[3]/div[1]/div')
-        print(len(elems))
-        for i,elem in enumerate(elems):
-            print(i, elem.text, '\n')
+        # elems = driver.find_elements(By.XPATH, '//*[@id="content"]/div/div/div/div[3]/div[1]/div/div/div[4]/div[3]/div[1]/div')
+        # print(len(elems))
+        # for i,elem in enumerate(elems):
+        #     adtext = elem.find_element(By.XPATH, 'div/div[3]/div/div/div[2]')
+        #     print(adtext.text)
+        #     break
+
+        months = driver.find_elements(By.XPATH, '//*[@id="content"]/div/div/div/div[3]/div[1]/div/div/div[position()>3]')
+        # print('months=', len(months))
+        for month in months:
+            ads = month.find_elements(By.XPATH, './div[3]/div[1]/div')
+            # print("ads=", len(ads))
+            for ad in ads:
+                text = ad.find_element(By.XPATH, './div/div[3]/div/div/div[2]').text.strip().encode("ascii","ignore").decode("ascii")
+                print(text.replace("\n"," ").replace(",", ''))
+                break
+            break
 
         # Nov Block:                          //*[@id="content"]/div/div/div/div[3]/div[1]/div/div/div[4]
         # Nov Block full xpath:  /html/body/div[1]/div[2]/div[1]/div/div/div/div[3]/div[1]/div/div/div[4]
@@ -141,6 +154,7 @@ def better_fb_search():
         #                        /html/body/div[1]/div[2]/div[1]/div/div/div/div[3]/div[1]/div/div/div[4] <- chromium
         # Nov Ad:                             //*[@id="content"]/div/div/div/div[3]/div[1]/div/div/div[4]/div[3]/div[1]/div[1]
         #                                     //*[@id="content"]/div/div/div/div[3]/div[1]/div/div/div[4]/div[3]/div[1]/div[1]  <- chromium
+        # Nob Ad Text:                        //*[@id="content"]/div/div/div/div[3]/div[1]/div/div/div[4]/div[3]/div[1]/div[1]/div/div[3]/div/div/div[2]
         # Nov Ad full xpath:     /html/body/div[1]/div[2]/div[1]/div/div/div/div[3]/div[1]/div/div/div[4]/div[3]/div[1]/div[1]
         #                        /html/body/div[1]/div[2]/div[1]/div/div/div/div[3]/div[1]/div/div/div[4]/div[3]/div[1]/div[1]  <- chromium
         # October 2021 Ad:       //*[@id="content"]/div/div/div/div[3]/div[1]/div/div/div[5]/div[3]/div[1]/div[1]
