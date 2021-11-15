@@ -18,8 +18,8 @@ AD_TYPE = {
 
 def fb_scrape(keyword, ad_type):
     print("Scraping {q}//{t}...".format(q=keyword, t=ad_type))
-    ad_texts = []
-    count = 0
+    ad_texts = set()
+
     def build_query(q, type=AD_TYPE['political']):
         # fb.com/ads/library/?active_status=all&ad_type=political_and_issue_ads&country=US&q=biden&sort_data[direction]=desc&sort_data[mode]=relevancy_monthly_grouped&search_type=keyword_unordered&media_type=none
         getVars = {'country':'US', 'sort_data[direction]':'desc', 'sort_data[mode]':'relevancy_monthly_grouped'}
@@ -49,22 +49,24 @@ def fb_scrape(keyword, ad_type):
         for month in months:
             try:
                 ads = month.find_elements(By.XPATH, './div[3]/div[1]/div')
-                count += len(ads)
                 for ad in ads:
                     text = ad.find_element(By.XPATH, './div/div[3]/div/div/div[2]').text.strip().encode("ascii","ignore").decode("ascii")
                     text = text.replace("\n"," ").replace(",", '')
                     if text:
-                        ad_texts.append(text)
-            except:
-                pass
-            print("Ads scraped: ", count)
-            if count > 300: break
+                        ad_texts.add(text)
+            except Exception as e:
+                print("[WARN] Something went wrong")
+            
+            n = len(ad_texts)
+            print("\tAds scraped: ", n)
+            if n > 1000: break  # just to avoid memory issues
     return ad_texts
 
 
 def main():
-    keywords = ['biden','trump']
-    keywords = ['guns', 'america', 'abortion']
+    # keywords = ['biden','trump']
+    # keywords = ['guns', 'america', 'abortion']
+    keywords = ['jobs', 'infrastructure', 'environment', 'privacy', 'economy']
     non_political_types = ['housing', 'employment', 'credit']
     for keyword in keywords:
         count = 0
@@ -82,6 +84,6 @@ def main():
                 for ad_text in ad_texts:
                     writer.writerow([ad_text, 'non-political', 'Facebook'])
                     count += len(ad_texts)
-        print("Total ads scraped for keyword: {q} = {n}".format(q=keyword, n=count))
+        print("Total ads scraped for keyword: {q} = {n}\n".format(q=keyword, n=count))
 
 main()
