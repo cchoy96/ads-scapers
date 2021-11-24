@@ -29,11 +29,11 @@ def get_creative_urls():
     df = df[['Ad_ID', 'Ad_URL', 'Ad_Type', 'Regions', 'Advertiser_ID', 'Advertiser_Name', 'Ad_Campaigns_List', 'Num_of_Days', 
     'Impressions', 'Spend_USD', 'Last_Served_Timestamp', 'Age_Targeting', 'Gender_Targeting', 'Geo_Targeting_Included',
     'Geo_Targeting_Excluded', 'Spend_Range_Min_USD', 'Spend_Range_Max_USD']]
-    df = df.head(20_000) # limit number of rows to reduce output filesize
+    df = df.head(10_000) # limit number of rows to reduce output filesize
     # Write
     print(df.head())
     df.to_csv(outpath)
     print("Number of US Text Ads = ", len(df.index))
 
 # get_advertiser_ids()
-# get_creative_urls()
+get_creative_urls()
