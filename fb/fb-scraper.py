@@ -66,7 +66,8 @@ def fb_scrape(keyword, ad_type):
 def main():
     # keywords = ['biden','trump']
     # keywords = ['guns', 'america', 'abortion']
-    keywords = ['jobs', 'infrastructure', 'environment', 'privacy', 'economy']
+    # keywords = ['jobs', 'infrastructure', 'environment', 'privacy', 'economy']
+    keywords = ['bernie']
     non_political_types = ['housing', 'employment', 'credit']
     for keyword in keywords:
         count = 0
