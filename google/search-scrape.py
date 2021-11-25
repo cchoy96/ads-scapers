@@ -9,7 +9,6 @@ from selenium.webdriver.chrome.options import Options
 import time
 import csv
 import pandas as pd
-import random
 
 DEBUG = False
 outpath = 'outputs/google-search-ads.csv'
@@ -50,7 +49,7 @@ def scrape_search_ads(queries, newFile):
                 political = "Paid for by" in ad.text # all Google political ads required to have this disclosure in the adText
                 # Source: https://support.google.com/adspolicy/answer/6014595?hl=en#zippy=%2Celection-ads-in-the-united-states
                 adText = ad.find_element(By.XPATH, "./div/div[2]").text.strip().encode("ascii","ignore").decode("ascii")
-                adText.replace('\n', ' ').replace(',', '')
+                adText = adText.replace('\n', ' ').replace(',', '')
                 if DEBUG:
                     print("\t" + adText)
                 ads.append((adText, political))
