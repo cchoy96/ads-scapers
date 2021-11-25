@@ -7,6 +7,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support.expected_conditions import presence_of_element_located
 from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
+import pandas as pd
 
 def scrape_ads():
     url = "https://transparencyreport.google.com/political-ads/advertiser/AR108481940364984320?campaign_creatives=start:1527638400000;end:1635897599999;spend:;impressions:;type:3;sort:3&lu=campaign_creatives"
@@ -45,4 +46,9 @@ def scrape_advertisers():
             except:
                 pass
 
-scrape_advertisers()
+def display_csv():
+    df = pd.read_csv('/Users/cchoy/Downloads/google-political-ads-transparency-bundle/google-political-ads-top-keywords-history.csv')
+    df = df.sort_values(by=['Report_Date'], ascending=False)
+    print(df.head())
+
+display_csv()
