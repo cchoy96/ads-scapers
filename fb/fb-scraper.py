@@ -2,7 +2,9 @@
 
 import time
 import csv
+import pandas as pd
 import urllib.parse
+from os.path import exists
 from selenium import webdriver 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -15,6 +17,8 @@ AD_TYPE = {
     'employment': 'employment_ads',
     'credit': 'credit_ads'
 }
+
+outfile = "outputs/fbAds.csv"
 
 def fb_scrape(keyword, ad_type):
     print("Scraping {q}//{t}...".format(q=keyword, t=ad_type))
@@ -51,7 +55,7 @@ def fb_scrape(keyword, ad_type):
                 ads = month.find_elements(By.XPATH, './div[3]/div[1]/div')
                 for ad in ads:
                     text = ad.find_element(By.XPATH, './div/div[3]/div/div/div[2]').text.strip().encode("ascii","ignore").decode("ascii")
-                    text = text.replace("\n"," ").replace(",", '')
+                    text = text.replace("\n"," ").replace(",", '').strip()
                     if text:
                         ad_texts.add(text)
             except Exception as e:
@@ -59,32 +63,43 @@ def fb_scrape(keyword, ad_type):
             
             n = len(ad_texts)
             print("\tAds scraped: ", n)
-            if n > 1000: break  # just to avoid memory issues
+            if n > 500: break  # just to avoid memory issues
     return ad_texts
 
+def remove_duplicates(filepath):
+    df = pd.read_csv(filepath)
+    df.drop_duplicates(subset=['AdText'], inplace=True)
+    df.to_csv(filepath, index=False)
 
 def main():
     # keywords = ['biden','trump']
     # keywords = ['guns', 'america', 'abortion']
     # keywords = ['jobs', 'infrastructure', 'environment', 'privacy', 'economy']
     keywords = ['bernie']
-    non_political_types = ['housing', 'employment', 'credit']
-    for keyword in keywords:
-        count = 0
-        with open('outputs/fbAds-{q}.csv'.format(q=keyword), 'w+') as f:
+
+    if not exists(outfile):
+        with open(outfile, 'w+') as f:
             writer = csv.writer(f, delimiter=',')
-            writer.writerow(['AdText', 'Category', 'Platform'])
+            writer.writerow(['AdText', 'Category', 'Platform', 'Keyword'])
+    
+    with open(outfile, 'a') as f:
+        writer = csv.writer(f, delimiter=',')
+        for keyword in keywords:
+            count = 0
             # Scrape and write political ads
             ad_texts = fb_scrape(keyword, AD_TYPE['political'])
             count += len(ad_texts)
             for ad_text in ad_texts:
-                writer.writerow([ad_text, 'political', 'Facebook'])
+                writer.writerow([ad_text, 'political', 'Facebook', keyword])
+            
             # Scrape and write non-political ads
+            non_political_types = ['housing', 'employment', 'credit']
             for type in non_political_types:
                 ad_texts = fb_scrape(keyword, AD_TYPE[type])
                 for ad_text in ad_texts:
-                    writer.writerow([ad_text, 'non-political', 'Facebook'])
+                    writer.writerow([ad_text, 'non-political', 'Facebook', keyword])
                     count += len(ad_texts)
-        print("Total ads scraped for keyword: {q} = {n}\n".format(q=keyword, n=count))
+            print("Total ads scraped for keyword: {q} = {n}\n".format(q=keyword, n=count))
+    remove_duplicates(outfile)
 
 main()
