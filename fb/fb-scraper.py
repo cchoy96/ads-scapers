@@ -2,6 +2,7 @@
 
 import time
 import csv
+import glob
 import pandas as pd
 import urllib.parse
 from os.path import exists
@@ -70,6 +71,23 @@ def remove_duplicates(filepath):
     df = pd.read_csv(filepath)
     df.drop_duplicates(subset=['AdText'], inplace=True)
     df.to_csv(filepath, index=False)
+
+def condense_outputs():
+    ''' Deprecated function used for condensing all the fbAds-{keyword}.csv files into one'''
+    files = glob.glob("outputs/fbAds-*.csv")
+
+    with open(outfile, "w+") as f:
+        writer = csv.writer(f)
+        writer.writerow(["AdText", "Category", "Platform", "Keywords"])
+
+    for file in files:
+        df = pd.read_csv(file)
+        keyword = file.split('.')[0].split('-')[1]
+        df["Keywords"] = keyword
+        df.AdText = df.AdText.str.strip()
+        df.to_csv(outfile, mode='a', header=False, index=False)
+
+    remove_duplicates(outfile)
 
 def main():
     # keywords = ['biden','trump']
